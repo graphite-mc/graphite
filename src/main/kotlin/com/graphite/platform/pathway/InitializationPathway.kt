@@ -3,14 +3,13 @@ package com.graphite.platform.pathway
 import com.graphite.platform.graphics.glfw.GlfwManager
 import com.graphite.platform.graphics.wgpu.WGPUManager
 import com.graphite.platform.graphics.wgpu.withWGPU
+import com.graphite.platform.logging.GraphiteLogger
 import com.graphite.platform.window.GlfwWindow
 import com.graphite.platform.window.WindowHints
 import com.graphite.platform.window.WindowManager
-import com.graphite.platform.window.getWindow
 import kotlinx.coroutines.runBlocking
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.option.GameOptions
-import org.apache.logging.log4j.LogManager
 import org.lwjgl.Version
 import java.io.IOException
 import java.io.InputStream
@@ -18,7 +17,7 @@ import java.nio.ByteBuffer
 import javax.imageio.ImageIO
 
 object InitializationPathway {
-    private val LOGGER = LogManager.getLogger("Graphite Initializer")
+    private val LOGGER = GraphiteLogger("Graphite Initializer")
 
     fun initializeGame(client: MinecraftClient) {
         GlfwManager.initializeGlfw()
@@ -38,7 +37,6 @@ object InitializationPathway {
         window.create(client.width, client.height, "Graphite Minecraft Client", hints = WindowHints(
             fullscreen = client.fullscreen
         ))
-        window.setIcon(32, 32, this.readInputStreamAsImage(MinecraftClient::class.java.getResourceAsStream("/assets/minecraft/icon_32x32.png")!!))
 
         WindowManager.setActiveWindow(window)
 
@@ -49,6 +47,10 @@ object InitializationPathway {
         withWGPU {
             LOGGER.info("WGPU initialized successfully.")
             LOGGER.info("Adapter: ${adapter.info.device} by ${adapter.info.vendor}")
+        }
+
+        while (!window.shouldClose) {
+            window.update()
         }
     }
 

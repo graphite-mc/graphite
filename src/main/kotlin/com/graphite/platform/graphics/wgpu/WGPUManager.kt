@@ -2,6 +2,7 @@ package com.graphite.platform.graphics.wgpu
 
 import com.graphite.platform.api.Os
 import com.graphite.platform.api.Platform
+import com.graphite.platform.graphics.wgpu.ffi.LibraryLoader
 import com.sun.jna.Pointer
 import io.ygdrasil.webgpu.WGPU
 import io.ygdrasil.webgpu.WGPUInstanceBackend
@@ -41,6 +42,8 @@ object WGPUManager {
         private set
 
     suspend fun setupWGPU(windowHandle: Long) {
+        LibraryLoader.load()
+
         this.wgpu = WGPU.createInstance(
             backend = WGPUInstanceBackend.Vulkan
         ) ?: throw WGPUException("Could not create WGPU instance.")

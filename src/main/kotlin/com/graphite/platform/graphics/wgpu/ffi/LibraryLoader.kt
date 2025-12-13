@@ -1,0 +1,106 @@
+package com.graphite.platform.graphics.wgpu.ffi
+
+import com.graphite.platform.api.Architecture
+import com.graphite.platform.api.Os
+import com.graphite.platform.api.Platform
+import com.graphite.platform.logging.GraphiteLogger
+import ffi.LibraryLoader
+import java.io.File
+import java.io.InputStream
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
+
+private const val WGPU_VERSION = "v25.0.0.1"
+private val LOGGER = GraphiteLogger("WGPU Loader")
+
+object LibraryLoader {
+    @Volatile
+    private var loaded = false
+
+    fun load() {
+        if (loaded) {
+            LOGGER.info("[WGPU] Library already loaded, skipping")
+            return
+        }
+
+        synchronized(this) {
+            if (loaded) return
+
+            LOGGER.info("[WGPU] Initializing native library loader")
+            LOGGER.info("[WGPU] OS=${Platform.os}, ARCH=${Platform.architecture}")
+
+            val resourcePath = resolveClasspathResource()
+            val extractedFile = extractToAbsoluteTemp(resourcePath)
+
+            LOGGER.info("[WGPU] Loading native library from absolute path:")
+            LOGGER.info("[WGPU] -> ${extractedFile.absolutePath}")
+
+            System.load(extractedFile.absolutePath)
+
+            loaded = true
+            LOGGER.info("[WGPU] Native library loaded successfully")
+        }
+    }
+}
+
+private fun resolveClasspathResource(): String {
+    val osSegment = when (Platform.os) {
+        Os.Windows -> "win32"
+        Os.Linux -> "linux"
+        Os.MacOs -> "darwin"
+    }
+
+    val archSegment = when (Platform.architecture) {
+        Architecture.X86_64 -> "x86-64"
+        Architecture.AARCH64 -> {
+            if (Platform.os == Os.Windows) {
+                error("WGPU aarch64 is not supported on Windows")
+            }
+            "aarch64"
+        }
+    }
+
+    val fileName = when (Platform.os) {
+        Os.Windows -> "WGPU.dll"
+        Os.Linux -> "libWGPU.so"
+        Os.MacOs -> "libWGPU.dylib"
+    }
+
+    val fullPath = "/$osSegment-$archSegment/$fileName"
+
+    LOGGER.info("[WGPU] Resolved classpath resource:")
+    LOGGER.info("[WGPU] -> $fullPath")
+
+    return fullPath
+}
+
+private fun extractToAbsoluteTemp(resourcePath: String): File {
+    val input: InputStream = LibraryLoader::class.java.getResourceAsStream(resourcePath)
+        ?: error("Native library not found on classpath: $resourcePath")
+
+    val suffix = when (Platform.os) {
+        Os.Windows -> ".dll"
+        Os.Linux -> ".so"
+        Os.MacOs -> ".dylib"
+    }
+
+    val tempFile = Files.createTempFile(
+        "wgpu-${WGPU_VERSION}-",
+        suffix
+    ).toFile()
+
+    LOGGER.info("[WGPU] Extracting native library to:")
+    LOGGER.info("[WGPU] -> ${tempFile.absolutePath}")
+
+    input.use {
+        Files.copy(it, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
+    }
+
+    tempFile.deleteOnExit()
+
+    if (!tempFile.exists()) {
+        error("Extraction failed, temp file does not exist")
+    }
+
+    return tempFile
+}

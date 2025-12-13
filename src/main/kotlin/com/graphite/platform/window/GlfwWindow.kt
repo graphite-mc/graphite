@@ -82,7 +82,6 @@ class GlfwWindow : Window {
 
     override fun update() {
         GLFW.glfwPollEvents()
-        GLFW.glfwSwapBuffers(nativeHandle)
     }
 
     override fun destroy() {

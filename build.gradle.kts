@@ -43,7 +43,7 @@ dependencies {
 
     modImplementation(libs.fabric.loader)
 
-    implementation(libs.wgpu4k)
+    implementation(libs.bundles.wgpu4k)
     implementation(libs.kotlin.coroutines)
     implementation(libs.lwjgl.core)
     implementation(libs.lwjgl.glfw)
