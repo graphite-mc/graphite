@@ -43,7 +43,10 @@ dependencies {
 
     modImplementation(libs.fabric.loader)
 
-    implementation(libs.bundles.wgpu4k)
+    implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.25.2")
+    implementation(libs.bundles.wgpu4k) {
+        exclude(group = "ch.qos.logback")
+    }
     implementation(libs.kotlin.coroutines)
     implementation(libs.lwjgl.core)
     implementation(libs.lwjgl.glfw)

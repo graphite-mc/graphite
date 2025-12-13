@@ -5,5 +5,10 @@
   "verbose": true,
   "mixins": [
     "MixinMinecraftClient"
+  ],
+  "client": [
+    "texture.MixinAbstractTexture",
+    "texture.MixinNativeImageBackedTexture",
+    "texture.MixinTextureManager"
   ]
 }

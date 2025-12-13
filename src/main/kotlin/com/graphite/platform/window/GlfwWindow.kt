@@ -72,12 +72,14 @@ class GlfwWindow : Window {
         }
     }
 
-    fun setIcon(w: Int, h: Int, pixels: ByteBuffer)  {
-        val icon: GLFWImage.Buffer = GLFWImage.create(1)
-        icon.width(w)
-        icon.height(h)
-        icon.pixels(pixels)
-        GLFW.glfwSetWindowIcon(nativeHandle, icon)
+    fun setIcon(vararg icons: Icon)  {
+        val glfwIcons = GLFWImage.malloc(icons.size)
+        for ((i, icon) in icons.withIndex()) {
+            glfwIcons.get(i)
+                .set(icon.width, icon.height, icon.pixels)
+        }
+        GLFW.glfwSetWindowIcon(nativeHandle, glfwIcons)
+        glfwIcons.free()
     }
 
     override fun update() {
@@ -87,4 +89,10 @@ class GlfwWindow : Window {
     override fun destroy() {
         GLFW.glfwDestroyWindow(nativeHandle)
     }
+
+    data class Icon(
+        val width: Int,
+        val height: Int,
+        val pixels: ByteBuffer
+    )
 }

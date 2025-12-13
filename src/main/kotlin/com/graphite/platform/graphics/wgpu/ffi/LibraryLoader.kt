@@ -3,15 +3,15 @@ package com.graphite.platform.graphics.wgpu.ffi
 import com.graphite.platform.api.Architecture
 import com.graphite.platform.api.Os
 import com.graphite.platform.api.Platform
-import com.graphite.platform.logging.GraphiteLogger
 import ffi.LibraryLoader
+import org.apache.logging.log4j.LogManager
 import java.io.File
 import java.io.InputStream
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
 private const val WGPU_VERSION = "v25.0.0.1"
-private val LOGGER = GraphiteLogger("WGPU Loader")
+private val LOGGER = LogManager.getLogger("WGPU Loader")
 
 object LibraryLoader {
     @Volatile
@@ -19,26 +19,25 @@ object LibraryLoader {
 
     fun load() {
         if (loaded) {
-            LOGGER.info("[WGPU] Library already loaded, skipping")
+            LOGGER.info("Library already loaded, skipping")
             return
         }
 
         synchronized(this) {
             if (loaded) return
 
-            LOGGER.info("[WGPU] Initializing native library loader")
-            LOGGER.info("[WGPU] OS=${Platform.os}, ARCH=${Platform.architecture}")
+            LOGGER.info("Initializing native library loader")
+            LOGGER.info("OS=${Platform.os}, ARCH=${Platform.architecture}")
 
             val resourcePath = resolveClasspathResource()
             val extractedFile = extractToAbsoluteTemp(resourcePath)
 
-            LOGGER.info("[WGPU] Loading native library from absolute path:")
-            LOGGER.info("[WGPU] -> ${extractedFile.absolutePath}")
+            LOGGER.info("Loading native library from ${extractedFile.absolutePath}")
 
             System.load(extractedFile.absolutePath)
 
             loaded = true
-            LOGGER.info("[WGPU] Native library loaded successfully")
+            LOGGER.info("Native library loaded successfully")
         }
     }
 }
@@ -68,8 +67,7 @@ private fun resolveClasspathResource(): String {
 
     val fullPath = "/$osSegment-$archSegment/$fileName"
 
-    LOGGER.info("[WGPU] Resolved classpath resource:")
-    LOGGER.info("[WGPU] -> $fullPath")
+    LOGGER.info("Resolved classpath resource $fullPath")
 
     return fullPath
 }
@@ -89,8 +87,7 @@ private fun extractToAbsoluteTemp(resourcePath: String): File {
         suffix
     ).toFile()
 
-    LOGGER.info("[WGPU] Extracting native library to:")
-    LOGGER.info("[WGPU] -> ${tempFile.absolutePath}")
+    LOGGER.info("Extracting native library to ${tempFile.absolutePath}")
 
     input.use {
         Files.copy(it, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING)

@@ -4,3 +4,10 @@ accessible field net/minecraft/client/MinecraftClient resourcePacks Ljava/util/L
 accessible field net/minecraft/client/MinecraftClient defaultResourcePack Lnet/minecraft/resource/DefaultResourcePack;
 accessible field net/minecraft/client/MinecraftClient fullscreen Z
 accessible field net/minecraft/client/MinecraftClient running Z
+accessible field net/minecraft/client/MinecraftClient loader Lnet/minecraft/client/resource/ResourcePackLoader;
+accessible field net/minecraft/client/MinecraftClient resourceManager Lnet/minecraft/resource/ReloadableResourceManager;
+accessible method net/minecraft/client/MinecraftClient registerMetadataSerializers ()V
+accessible field net/minecraft/client/MinecraftClient resourcePackDir Ljava/io/File;
+accessible field net/minecraft/client/MinecraftClient metadataSerializer Lnet/minecraft/util/MetadataSerializer;
+accessible field net/minecraft/client/MinecraftClient languageManager Lnet/minecraft/client/resource/language/LanguageManager;
+accessible field net/minecraft/client/MinecraftClient textureManager Lnet/minecraft/client/texture/TextureManager;

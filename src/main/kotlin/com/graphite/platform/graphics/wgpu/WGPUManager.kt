@@ -12,10 +12,15 @@ import darwin.NSWindow
 import io.ygdrasil.webgpu.Adapter
 import io.ygdrasil.webgpu.DeviceDescriptor
 import io.ygdrasil.webgpu.GPUDevice
+import io.ygdrasil.webgpu.GPUTextureFormat
+import io.ygdrasil.webgpu.GPUTextureUsage
 import io.ygdrasil.webgpu.NativeSurface
+import io.ygdrasil.webgpu.PresentMode
 import io.ygdrasil.webgpu.RenderingContext
 import io.ygdrasil.webgpu.Surface
+import io.ygdrasil.webgpu.SurfaceConfiguration
 import io.ygdrasil.webgpu.SurfaceRenderingContext
+import io.ygdrasil.webgpu.TextureUsage
 import io.ygdrasil.webgpu.toNativeAddress
 import org.lwjgl.glfw.GLFWNativeCocoa.glfwGetCocoaWindow
 import org.lwjgl.glfw.GLFWNativeWayland.glfwGetWaylandDisplay
@@ -67,9 +72,18 @@ object WGPUManager {
 
         nativeSurface.computeSurfaceCapabilities(adapter)
 
-        this.renderingContext = SurfaceRenderingContext(surface, surface.supportedFormats.first())
+        this.renderingContext = SurfaceRenderingContext(surface, GPUTextureFormat.RGBA8Unorm)
 
         this.context = WGPUContext(wgpu, surface, adapter, device, renderingContext)
+
+        surface.configure(
+            SurfaceConfiguration(
+                device = device,
+                format = GPUTextureFormat.RGBA8Unorm,
+                usage = setOf(GPUTextureUsage.RenderAttachment),
+                presentMode = PresentMode.Fifo
+            )
+        )
     }
 }
 
