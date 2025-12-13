@@ -1,0 +1,6 @@
+accessWidener v2 named
+
+accessible field net/minecraft/client/MinecraftClient resourcePacks Ljava/util/List;
+accessible field net/minecraft/client/MinecraftClient defaultResourcePack Lnet/minecraft/resource/DefaultResourcePack;
+accessible field net/minecraft/client/MinecraftClient fullscreen Z
+accessible field net/minecraft/client/MinecraftClient running Z

@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "graphite",
+  "version": "${version}",
+
+  "name": "Graphite",
+  "description": "A modern rendering engine for Minecraft.",
+  "authors": [
+    "Lunasa"
+  ],
+  "contact": {
+    "homepage": "https://lunasa.dev/mods/graphite",
+    "issues": "https://github.com/graphite-mc/graphite/issues",
+    "sources": "https://github.com/graphite-mc/graphite"
+  },
+
+  "license": "ARR",
+  "icon": "assets/graphite/icon.png",
+
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.graphite.GraphiteClientMod"
+    ]
+  },
+  "mixins": [
+    "graphite.mixins.json"
+  ],
+  "accessWidener" : "graphite.accesswidener",
+
+  "depends": {
+    "fabricloader": ">=0.14.6",
+    "minecraft": "1.8.9"
+  }
+}

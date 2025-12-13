@@ -1,0 +1,23 @@
+[versions]
+kotlin = "2.2.21"
+loom = "1.14.1"
+wgpu4k = "0.1.1"
+minecraft = "1.8.9"
+fabric-loader = "0.18.2"
+yarn = "1.8.9+build.576"
+lwjgl = "3.3.6"
+kotlin-coroutines = "1.7.3"
+
+[libraries]
+kotlin-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
+wgpu4k = { module = "io.ygdrasil:wgpu4k-toolkit", version.ref = "wgpu4k" }
+fabric-loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric-loader" }
+minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
+yarn = { module = "net.legacyfabric:yarn", version.ref = "yarn" }
+lwjgl-core = { module = "org.lwjgl:lwjgl", version.ref = "lwjgl" }
+lwjgl-glfw = { module = "org.lwjgl:lwjgl-glfw", version.ref = "lwjgl" }
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+fabric-loom = { id = "fabric-loom", version.ref = "loom" }
+legacy-looming = { id = "legacy-looming", version.ref = "loom" }

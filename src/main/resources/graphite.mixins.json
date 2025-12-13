@@ -1,0 +1,9 @@
+{
+  "minVersion": "0.8",
+  "package": "com.graphite.mixins",
+  "compatibilityLevel": "JAVA_22",
+  "verbose": true,
+  "mixins": [
+    "MixinMinecraftClient"
+  ]
+}
