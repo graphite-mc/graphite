@@ -1,6 +1,5 @@
 package com.graphite.renderer.shader
 
-import com.graphite.platform.graphics.wgpu.WGPUContext
 import io.ygdrasil.webgpu.GPUDevice
 import io.ygdrasil.webgpu.GPUShaderModule
 import io.ygdrasil.webgpu.ShaderModuleDescriptor

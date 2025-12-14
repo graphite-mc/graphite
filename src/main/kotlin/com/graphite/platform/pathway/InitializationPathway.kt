@@ -6,7 +6,7 @@ import com.graphite.platform.graphics.wgpu.withWGPU
 import com.graphite.platform.window.GlfwWindow
 import com.graphite.platform.window.WindowHints
 import com.graphite.platform.window.WindowManager
-import com.graphite.renderer.pathway.SplashScreenRenderer
+import com.graphite.renderer.pathway.splash.SplashManager
 import kotlinx.coroutines.runBlocking
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.option.GameOptions
@@ -18,8 +18,6 @@ import net.minecraft.util.Identifier
 import org.apache.logging.log4j.LogManager
 import org.lwjgl.BufferUtils
 import org.lwjgl.Version
-import java.io.File
-import java.io.IOException
 import java.io.InputStream
 import java.nio.ByteBuffer
 import javax.imageio.ImageIO
@@ -65,7 +63,7 @@ object InitializationPathway {
 
         withWGPU {
             LOGGER.info("WGPU initialized successfully.")
-            LOGGER.info("Adapter: ${adapter.info.device} by ${adapter.info.vendor}")
+            LOGGER.info("Adapter: ${adapter.info.device} (${adapter.info.vendor}) - ${adapter.info.description}")
         }
 
         client.registerMetadataSerializers()
@@ -77,13 +75,8 @@ object InitializationPathway {
         client.reloadResources()
         client.textureManager = TextureManager(resourceManager)
         resourceManager.registerListener(client.textureManager)
-
-        SplashScreenRenderer.drawSplashScreen(client, client.textureManager)
-        window.update()
-
-        while (!window.shouldClose) {
-
-        }
+        InitializationThread(client).start()
+        SplashManager.start()
     }
 
     private fun InputStream.readPixels(): ByteBuffer {

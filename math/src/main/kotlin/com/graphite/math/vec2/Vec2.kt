@@ -1,9 +1,10 @@
 package com.graphite.math.vec2
 
+import com.graphite.math.UniformElement
 import kotlin.jvm.JvmInline
 
 @JvmInline
-public value class Vec2 internal constructor(public val array: FloatArray) {
+public value class Vec2 internal constructor(public val array: FloatArray) : UniformElement {
     public inline var x: Float
         get() = array[0]
         set(value) {
@@ -18,6 +19,9 @@ public value class Vec2 internal constructor(public val array: FloatArray) {
 
     public operator fun component1(): Float = array[0]
     public operator fun component2(): Float = array[1]
+
+    override val size get() = (2 * Float.SIZE_BYTES).toUInt()
+    override val data get() = floatArrayOf(x, y)
 }
 
 
