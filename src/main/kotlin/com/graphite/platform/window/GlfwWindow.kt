@@ -1,5 +1,9 @@
 package com.graphite.platform.window
 
+import com.graphite.platform.graphics.wgpu.WGPUManager
+import io.ygdrasil.webgpu.GPUTextureFormat
+import io.ygdrasil.webgpu.PresentMode
+import io.ygdrasil.webgpu.SurfaceConfiguration
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.glfw.GLFWImage
 import org.lwjgl.glfw.GLFWVidMode
@@ -27,7 +31,11 @@ class GlfwWindow : Window {
     override var vsync: Boolean = false
         set(value) {
             field = value
-            GLFW.glfwSwapInterval(if (value) 1 else 0)
+            WGPUManager.surface.configure(SurfaceConfiguration(
+                device = WGPUManager.device,
+                format = GPUTextureFormat.RGBA8Unorm,
+                presentMode = if (value) PresentMode.Fifo else PresentMode.Mailbox
+            ))
         }
 
     private var fullscreenMonitor: Long = NULL
@@ -59,9 +67,19 @@ class GlfwWindow : Window {
             this.width = width
             this.height = height
         }
+
+        GLFW.glfwSetWindowSizeCallback(nativeHandle) { handle, w, h ->
+            WGPUManager.surface.configure(SurfaceConfiguration(
+                device = WGPUManager.device,
+                format = GPUTextureFormat.RGBA8Unorm,
+                presentMode = if (vsync) PresentMode.Fifo else PresentMode.Mailbox
+            ))
+            this.width = w
+            this.height = h
+        }
     }
 
-    fun setFullscreen(enabled: Boolean) {
+    override fun setFullscreen(enabled: Boolean) {
         val monitor = GLFW.glfwGetPrimaryMonitor()
         val mode = GLFW.glfwGetVideoMode(monitor)!!
 
@@ -70,6 +88,10 @@ class GlfwWindow : Window {
         } else {
             GLFW.glfwSetWindowMonitor(nativeHandle, NULL, 100, 100, width, height, mode.refreshRate())
         }
+    }
+
+    override fun setSize(width: Int, height: Int) {
+        GLFW.glfwSetWindowSize(nativeHandle, width, height)
     }
 
     fun setIcon(vararg icons: Icon)  {

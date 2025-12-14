@@ -9,6 +9,9 @@
   "client": [
     "texture.MixinAbstractTexture",
     "texture.MixinNativeImageBackedTexture",
-    "texture.MixinTextureManager"
+    "texture.MixinResourceTexture",
+    "texture.MixinSpriteAtlasTexture",
+    "texture.MixinTextureManager",
+    "texture.MixinTextureUtil"
   ]
 }

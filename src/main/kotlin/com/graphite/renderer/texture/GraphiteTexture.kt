@@ -15,6 +15,14 @@ abstract class GraphiteTexture(val identifier: Identifier) {
 
     abstract fun createTextureDescriptor(context: WGPUContext): TextureDescriptor
     abstract fun upload()
+    abstract fun uploadMipChunked(
+        level: Int,
+        mipWidth: Int,
+        mipHeight: Int,
+        xOffset: Int,
+        yOffset: Int,
+        pixels: IntArray
+    )
 
     fun createView() = texture.createView()
 

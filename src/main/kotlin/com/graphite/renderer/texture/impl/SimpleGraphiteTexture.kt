@@ -21,8 +21,16 @@ class SimpleGraphiteTexture(
     identifier: Identifier,
     private val width: Int,
     private val height: Int,
-    private val pixels: IntArray
+    private val pixels: IntArray,
+    protected val mipLevels: Int,
 ) : GraphiteTexture(identifier) {
+    constructor(
+        identifier: Identifier,
+        width: Int,
+        height: Int,
+        pixels: IntArray,
+    ) : this(identifier, width, height, pixels, 1)
+
     override fun createTextureDescriptor(context: WGPUContext): TextureDescriptor {
         return TextureDescriptor(
             label = identifier.path,
@@ -31,6 +39,7 @@ class SimpleGraphiteTexture(
             ),
             dimension = GPUTextureDimension.TwoD,
             format = GPUTextureFormat.RGBA8Unorm,
+            mipLevelCount = mipLevels.toUInt(),
             usage = setOf(GPUTextureUsage.TextureBinding, GPUTextureUsage.CopyDst, GPUTextureUsage.RenderAttachment)
         )
     }
@@ -57,6 +66,51 @@ class SimpleGraphiteTexture(
                     rowsPerImage = height.toUInt()
                 ),
                 size = Extent3D(width.toUInt(), height.toUInt())
+            )
+        }
+    }
+
+    override fun uploadMipChunked(
+        level: Int,
+        mipWidth: Int,
+        mipHeight: Int,
+        xOffset: Int,
+        yOffset: Int,
+        pixels: IntArray
+    ) = withWGPU {
+        require(level >= 0) {
+            "Mip level must be non-negative, got: $level"
+        }
+        require(level.toUInt() < mipLevels.toUInt()) {
+            "Invalid mip level $level (texture has $mipLevels mip levels, valid range is 0-${mipLevels.toUInt() - 1u})"
+        }
+
+        val byteBuffer = ByteArray(pixels.size * 4)
+        for (i in pixels.indices) {
+            val pixel = pixels[i]
+            byteBuffer[i * 4 + 0] = (pixel shr 16 and 0xFF).toByte()
+            byteBuffer[i * 4 + 1] = (pixel shr 8 and 0xFF).toByte()
+            byteBuffer[i * 4 + 2] = (pixel and 0xFF).toByte()
+            byteBuffer[i * 4 + 3] = (pixel shr 24 and 0xFF).toByte()
+        }
+
+        arrayBufferOf(byteBuffer) {
+            byteBuffer.writeInto(it)
+
+            device.queue.writeTexture(
+                destination = TexelCopyTextureInfo(
+                    texture = texture,
+                    mipLevel = level.toUInt(),
+                    origin = Origin3D(xOffset.toUInt(), yOffset.toUInt(), 0u),
+                    aspect = GPUTextureAspect.All
+                ),
+                data = it,
+                dataLayout = TexelCopyBufferLayout(
+                    offset = 0u,
+                    bytesPerRow = mipWidth.toUInt() * 4u,
+                    rowsPerImage = mipHeight.toUInt()
+                ),
+                size = Extent3D(mipWidth.toUInt(), mipHeight.toUInt(), 1u)
             )
         }
     }

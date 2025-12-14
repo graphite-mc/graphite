@@ -75,7 +75,14 @@ object InitializationPathway {
         client.reloadResources()
         client.textureManager = TextureManager(resourceManager)
         resourceManager.registerListener(client.textureManager)
-        InitializationThread(client).start()
+        InitializationThread(client).apply {
+            start()
+            uncaughtExceptionHandler = Thread.UncaughtExceptionHandler { t, e ->
+                LOGGER.error("Uncaught exception in initialization thread", e)
+                SplashManager.stop()
+            }
+        }
+
         SplashManager.start()
     }
 

@@ -13,5 +13,7 @@ interface Window {
 
     fun create(width: Int, height: Int, title: String, hints: WindowHints = WindowHints())
     fun update()
+    fun setFullscreen(fullscreen: Boolean)
+    fun setSize(width: Int, height: Int)
     fun destroy()
 }
