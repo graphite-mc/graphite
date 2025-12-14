@@ -1,9 +1,15 @@
 package com.graphite.platform.window
 
 import com.graphite.platform.graphics.wgpu.WGPUManager
+import com.graphite.platform.window.input.MouseInputHandler
+import com.graphite.renderer.RenderSystem
+import com.graphite.utility.ReconfigurationManager
 import io.ygdrasil.webgpu.GPUTextureFormat
 import io.ygdrasil.webgpu.PresentMode
 import io.ygdrasil.webgpu.SurfaceConfiguration
+import io.ygdrasil.webgpu.poll
+import kotlinx.coroutines.runBlocking
+import net.minecraft.client.MinecraftClient
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.glfw.GLFWImage
 import org.lwjgl.glfw.GLFWVidMode
@@ -31,11 +37,13 @@ class GlfwWindow : Window {
     override var vsync: Boolean = false
         set(value) {
             field = value
-            WGPUManager.surface.configure(SurfaceConfiguration(
-                device = WGPUManager.device,
-                format = GPUTextureFormat.RGBA8Unorm,
-                presentMode = if (value) PresentMode.Fifo else PresentMode.Mailbox
-            ))
+            runBlocking {
+                ReconfigurationManager.queueReconfigure(SurfaceConfiguration(
+                    device = WGPUManager.device,
+                    format = GPUTextureFormat.RGBA8Unorm,
+                    presentMode = PresentMode.Immediate
+                ))
+            }
         }
 
     private var fullscreenMonitor: Long = NULL
@@ -69,21 +77,35 @@ class GlfwWindow : Window {
         }
 
         GLFW.glfwSetWindowSizeCallback(nativeHandle) { handle, w, h ->
-            WGPUManager.surface.configure(SurfaceConfiguration(
-                device = WGPUManager.device,
-                format = GPUTextureFormat.RGBA8Unorm,
-                presentMode = if (vsync) PresentMode.Fifo else PresentMode.Mailbox
-            ))
-            this.width = w
-            this.height = h
+            runBlocking {
+                WGPUManager.device.poll().onSuccess {
+                    ReconfigurationManager.queueReconfigure(SurfaceConfiguration(
+                        device = WGPUManager.device,
+                        format = GPUTextureFormat.RGBA8Unorm,
+                        presentMode = PresentMode.Immediate
+                    ))
+                    MinecraftClient.getInstance().apply {
+                        this.width = w
+                        this.height = h
+                        this.currentScreen.resize(this, w, h)
+                    }
+                    RenderSystem.resize(w, h)
+                    this@GlfwWindow.width = w
+                    this@GlfwWindow.height = h
+                }.onFailure {
+                    println("Failed to poll: $it")
+                }
+            }
         }
+
+        MouseInputHandler.setupForWindow(nativeHandle)
     }
 
-    override fun setFullscreen(enabled: Boolean) {
+    override fun setFullscreen(fullscreen: Boolean) {
         val monitor = GLFW.glfwGetPrimaryMonitor()
         val mode = GLFW.glfwGetVideoMode(monitor)!!
 
-        if (enabled) {
+        if (fullscreen) {
             GLFW.glfwSetWindowMonitor(nativeHandle, monitor, 0, 0, mode.width(), mode.height(), mode.refreshRate())
         } else {
             GLFW.glfwSetWindowMonitor(nativeHandle, NULL, 100, 100, width, height, mode.refreshRate())

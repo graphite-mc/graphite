@@ -81,7 +81,7 @@ object WGPUManager {
                 device = device,
                 format = GPUTextureFormat.RGBA8Unorm,
                 usage = setOf(GPUTextureUsage.RenderAttachment),
-                presentMode = PresentMode.Fifo
+                presentMode = PresentMode.Immediate
             )
         )
     }

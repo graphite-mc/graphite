@@ -7,6 +7,7 @@ import com.graphite.platform.window.GlfwWindow
 import com.graphite.platform.window.WindowHints
 import com.graphite.platform.window.WindowManager
 import com.graphite.renderer.pathway.splash.SplashManager
+import com.graphite.renderer.pathway.ui.BatchedRenderer
 import kotlinx.coroutines.runBlocking
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.option.GameOptions
@@ -46,7 +47,7 @@ object InitializationPathway {
         LOGGER.info("LWJGL version: ${Version.getVersion()}")
 
         val window = GlfwWindow()
-        window.create(client.width, client.height, "Graphite Minecraft Client", hints = WindowHints(
+        window.create(client.width, client.height, "Minecraft 1.8.9", hints = WindowHints(
             fullscreen = client.fullscreen
         ))
         runCatching {
@@ -83,28 +84,40 @@ object InitializationPathway {
             }
         }
 
+        LOGGER.info("Initializing 2D graphics")
+        BatchedRenderer.initialize()
+
         SplashManager.start()
     }
 
     private fun InputStream.readPixels(): ByteBuffer {
         val image = ImageIO.read(this)
-        val pixels = image.getRGB(
-            0,
-            0,
-            image.width,
-            image.height,
-            null as IntArray?,
-            0,
-            image.width
-        )
+            ?: error("Failed to decode image")
 
-        return BufferUtils.createByteBuffer(4 * pixels.size).apply {
-            pixels.forEach { pixel ->
-                putInt(pixel shl 8 or (pixel shr 24 and 255))
-            }
-            flip()
+        val width = image.width
+        val height = image.height
+
+        val pixels = IntArray(width * height)
+        image.getRGB(0, 0, width, height, pixels, 0, width)
+
+        val buffer = BufferUtils.createByteBuffer(width * height * 4)
+
+        for (pixel in pixels) {
+            val a = (pixel ushr 24 and 0xFF).toByte()
+            val r = (pixel ushr 16 and 0xFF).toByte()
+            val g = (pixel ushr 8  and 0xFF).toByte()
+            val b = (pixel         and 0xFF).toByte()
+
+            buffer.put(r)
+            buffer.put(g)
+            buffer.put(b)
+            buffer.put(a)
         }
+
+        buffer.flip()
+        return buffer
     }
+
 
     private fun GlfwWindow.setupIcons(client: MinecraftClient) {
         icon32Buffer = client.defaultResourcePack.open(ICON_32_ID).readPixels()
@@ -114,6 +127,8 @@ object InitializationPathway {
         val icon16 = GlfwWindow.Icon(16, 16, icon16Buffer)
 
         setIcon(icon32, icon16)
+
+        update()
     }
 
     private fun initializeTimerHackThread(client: MinecraftClient) {

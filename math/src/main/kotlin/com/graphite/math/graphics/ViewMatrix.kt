@@ -27,7 +27,7 @@ public fun lookAt(eye: Vec3, center: Vec3, up: Vec3): Mat4 = withMat4 {
  *
  * @param result The [Mat4] object to write the result to.
  */
-public inline fun lookAt(eye: Vec3, center: Vec3, up: Vec3, result: Mat4) {
+public fun lookAt(eye: Vec3, center: Vec3, up: Vec3, result: Mat4) {
     lookAt(eye.x, eye.y, eye.z, center.x, center.y, center.z, up.x, up.y, up.z, result)
 }
 

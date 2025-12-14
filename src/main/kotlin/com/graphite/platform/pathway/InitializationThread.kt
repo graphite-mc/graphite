@@ -1,6 +1,8 @@
 package com.graphite.platform.pathway
 
+import com.graphite.game.screens.GraphiteTitleScreen
 import com.graphite.platform.window.getWindow
+import com.graphite.renderer.RenderSystem
 import com.graphite.renderer.pathway.splash.SplashManager
 import net.minecraft.advancement.AchievementsAndCriterions
 import net.minecraft.client.MinecraftClient
@@ -73,6 +75,8 @@ class InitializationThread(private val client: MinecraftClient) : Thread("Initia
         client.resourceManager.registerListener(client.blockRenderManager)
         client.notification = AchievementNotification(client)
 
+        RenderSystem.initialize()
+
         SplashManager.stop()
 
         client.loadingScreenRenderer = LoadingScreenRenderer(client)
@@ -80,8 +84,10 @@ class InitializationThread(private val client: MinecraftClient) : Thread("Initia
             client.toggleFullscreen()
         }
 
-        getWindow().vsync = client.options.vsync
+        getWindow().vsync = false
 
-        logger.info("Finished game initialization!")
+        logger.info("Finished Minecraft initialization.")
+
+        client.setScreen(GraphiteTitleScreen())
     }
 }
