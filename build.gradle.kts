@@ -60,6 +60,10 @@ loom {
     accessWidenerPath.set(file("src/main/resources/graphite.accesswidener"))
 }
 
+kotlin {
+    jvmToolchain(24)
+}
+
 configurations.all {
     exclude(group = "org.lwjgl.lwjgl")
 }

@@ -41,6 +41,8 @@ object MinecraftGameHandler {
         for (i in 0..<client.ticker.ticksThisFrame) {
         }
 
+        ReconfigurationManager.flushLast()
+
         RenderSystem.defaultRenderTarget().render(clearColor = Color(0.0, 0.0, 0.0, 1.0)) {}
 
         if (!client.skipGameRender) {
@@ -55,8 +57,6 @@ object MinecraftGameHandler {
         window.update()
         client.fpsCounter++
 
-        ReconfigurationManager.flushLast()
-        
         while(MinecraftClient.getTime() >= client.time + 1000L) {
             MinecraftClient.currentFps = client.fpsCounter
             client.fpsDebugString = String.format("%d fps", MinecraftClient.currentFps)
