@@ -28,6 +28,8 @@ public value class Mat4 private constructor(public val array: FloatArray) {
         }
     }
 
+    public operator fun get(position: Int) = array[position]
+
     public fun assignIdentity() {
         floatArrayCopy(MAT4_IDENTITY, array, 0)
     }

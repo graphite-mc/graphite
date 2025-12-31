@@ -20,9 +20,7 @@ object GraphiteGameRenderer {
 
         BatchedRenderer.withBatch {
             val fpsText = "${MinecraftClient.getCurrentFps()} fps"
-            val textWidth = getTextWidth(fpsText) * 2f
-            val textHeight = fontHeight * 2f
-            drawTextWithShadow(fpsText, (client.width - textWidth) - 5, (client.height - textHeight) - 5, 2f, -1)
+            drawTextWithShadow(fpsText, 5f, 5f, 2f, -1)
         }
     }
 }

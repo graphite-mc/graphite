@@ -74,6 +74,27 @@ public fun translateMatrix(t: Vec3): Mat4 = withMat4 {
     translateMatrix(t.x, t.y, t.z, it)
 }
 
+public infix fun Mat4.translate(t: Vec3): Mat4 {
+    translateMatrix(t.x, t.y, t.z, this)
+    return this
+}
+
+public infix fun Mat4.rotateX(x: Float): Mat4 {
+    rotateMatrix(x, 1f, 0f, 0f, this)
+    return this
+}
+
+public infix fun Mat4.rotateY(y: Float): Mat4 {
+    rotateMatrix(y, 0f, 1f, 0f, this)
+    return this
+}
+
+public infix fun Mat4.rotateZ(z: Float): Mat4 {
+    rotateMatrix(z, 0f, 0f, 1f, this)
+    return this
+}
+
+
 public fun translateMatrix(tx: Float, ty: Float, tz: Float, result: Mat4) {
     result.array[0] = 1f
     result.array[1] = 0f

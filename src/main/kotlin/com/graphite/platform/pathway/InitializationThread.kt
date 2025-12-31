@@ -88,6 +88,6 @@ class InitializationThread(private val client: MinecraftClient) : Thread("Initia
 
         logger.info("Finished Minecraft initialization.")
 
-        client.setScreen(GraphiteTitleScreen())
+        client.setScreen(GraphiteTitleScreen)
     }
 }

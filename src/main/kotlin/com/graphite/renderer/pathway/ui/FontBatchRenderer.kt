@@ -248,7 +248,7 @@ class FontBatchRenderer(
         this.scale = scale
 
         return if (shadow) {
-            val shadowX = drawLayer(text, x + 1f, y + 1f, color, true)
+            val shadowX = drawLayer(text, x + 0.5f, y + 0.5f, color, true)
             max(shadowX, drawLayer(text, x, y, color, false))
         } else {
             drawLayer(text, x, y, color, false)

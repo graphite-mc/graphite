@@ -53,7 +53,7 @@ dependencies {
     implementation("org.lwjgl", "lwjgl", version = libs.versions.lwjgl.get(), classifier = lwjglNatives)
     implementation("org.lwjgl", "lwjgl-glfw", version = libs.versions.lwjgl.get(), classifier = lwjglNatives)
 
-    implementation(project(":math"))
+    implementation("org.joml:joml:1.10.5")
 }
 
 loom {

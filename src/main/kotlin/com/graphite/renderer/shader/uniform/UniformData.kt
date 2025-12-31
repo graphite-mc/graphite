@@ -1,20 +1,20 @@
 package com.graphite.renderer.shader.uniform
 
-import com.graphite.math.UniformElement
 import io.ygdrasil.webgpu.GPUBuffer
 import io.ygdrasil.webgpu.GPUDevice
 import io.ygdrasil.webgpu.arrayBufferOf
+import org.lwjgl.util.vector.Vector2f
 
 class UniformData(
-    vararg val elements: UniformElement
+    vararg val elements: Vector2f
 ) {
-    val size get() = elements.sumOf { it.size }.toULong()
+    val size get() = elements.sumOf { 2 * Float.SIZE_BYTES }.toULong()
 
     fun writeInto(device: GPUDevice, buffer: GPUBuffer): ULong {
-        val arrays = elements.map { it.data }
+        val arrays = elements.map { arrayOf(it.x, it.y) }
 
         val totalSize = arrays.sumOf { it.size }
-        val combined = FloatArray(totalSize)
+        val combined = FloatArray(totalSize).toTypedArray()
 
         var offset = 0
         for (arr in arrays) {
@@ -25,7 +25,7 @@ class UniformData(
             offset += arr.size
         }
 
-        arrayBufferOf(combined) {
+        arrayBufferOf(combined.toFloatArray()) {
             device.queue.writeBuffer(
                 buffer = buffer,
                 bufferOffset = 0u,
