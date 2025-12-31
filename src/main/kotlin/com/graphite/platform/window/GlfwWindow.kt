@@ -87,7 +87,7 @@ class GlfwWindow : Window {
                     MinecraftClient.getInstance().apply {
                         this.width = w
                         this.height = h
-                        this.currentScreen.resize(this, w, h)
+                        this.currentScreen?.resize(this, w, h)
                     }
                     RenderSystem.resize(w, h)
                     this@GlfwWindow.width = w
