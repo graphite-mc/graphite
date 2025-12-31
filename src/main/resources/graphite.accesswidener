@@ -28,3 +28,4 @@ accessible field net/minecraft/client/MinecraftClient tasks Ljava/util/Queue;
 accessible field net/minecraft/client/MinecraftClient fpsCounter I
 accessible field net/minecraft/client/MinecraftClient currentFps I
 accessible field net/minecraft/client/MinecraftClient time J
+accessible method net/minecraft/client/gui/screen/Screen mouseClicked (III)V

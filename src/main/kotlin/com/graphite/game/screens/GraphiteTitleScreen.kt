@@ -3,12 +3,18 @@ package com.graphite.game.screens
 import com.graphite.game.screens.titlescreen.PanoramaRenderer
 import com.graphite.renderer.RenderSystem
 import com.graphite.renderer.pathway.ui.BatchedRenderer
+import com.graphite.renderer.utility.baseLevel
 import com.graphite.renderer.utility.createTexture
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.screen.Screen
+import net.minecraft.client.gui.screen.SettingsScreen
+import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen
+import net.minecraft.client.gui.screen.options.LanguageOptionsScreen
+import net.minecraft.client.gui.screen.world.SelectWorldScreen
 import net.minecraft.client.gui.widget.ButtonWidget
 import net.minecraft.client.resource.language.I18n
 import net.minecraft.util.Identifier
+import net.minecraft.world.DemoServerWorld
 
 object GraphiteTitleScreen : Screen() {
     private val minecraftTitleTextureView by lazy {
@@ -100,6 +106,23 @@ object GraphiteTitleScreen : Screen() {
             this@GraphiteTitleScreen.buttons.forEach {
                 it.render(client, mouseX, mouseY)
             }
+        }
+    }
+    override fun buttonClicked(buttonWidget: ButtonWidget) {
+        if (buttonWidget.id == 0) {
+//            this.client.setScreen(SettingsScreen(this, this.client.options))
+        }
+
+        if (buttonWidget.id == 1) {
+            baseLevel(client)
+        }
+
+        if (buttonWidget.id == 2) {
+//            this.client.setScreen(MultiplayerScreen(this))
+        }
+
+        if (buttonWidget.id == 4) {
+            this.client.scheduleStop()
         }
     }
 }

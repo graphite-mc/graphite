@@ -4,7 +4,6 @@ import com.graphite.renderer.pathway.ui.BatchedRenderer
 import com.graphite.renderer.utility.createTexture
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.widget.ButtonWidget
-import kotlin.getValue
 
 class GraphiteButton(
     id: Int, x: Int, y: Int, w: Int, h: Int, text: String
@@ -70,5 +69,9 @@ class GraphiteButton(
                 )
             }
         }
+    }
+
+    override fun isMouseOver(minecraftClient: MinecraftClient?, i: Int, j: Int): Boolean {
+        return this.active && this.visible && i >= this.x && j >= this.y && i < this.x + this.width * 2f && j < this.y + this.height * 2f
     }
 }
